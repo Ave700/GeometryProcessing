@@ -1,11 +1,11 @@
 # GeometryProcessing
-- 
+
 This is a geometry processing research project I am doing with Dr. Zhang at Oregon State University.
 
 The application is built in OpenGL and QT. 
 
 # File Structure
-- 
+
 <ul>
 <li>3rdparty
     <ul>
@@ -35,8 +35,9 @@ The application is built in OpenGL and QT.
 </li>        
 <li>All source and header files are in the main directory</li>
 </ul>
+
 # Code Structure
-- 
+
 <ul>
 <li>Main</li>
     Contains main window call and initialization call
