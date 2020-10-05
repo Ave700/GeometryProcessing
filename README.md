@@ -58,7 +58,6 @@ for windows, and I have not attempted to use it with Mac OS yet.</p>
 <ol>
 <li>If Qt is not installed go to QT's website and download it: https://www.qt.io/download </li>
     I'd reccomend while installing only selecting the version you need ( for instance 5.15 > msvc2019 )
-<li/>
 <li>Open the QTWidgetContour.pro file</li>
 <li>Import for you development enviornment (probably only works for 32bit)
 <li>At this point it should build properly</li>
