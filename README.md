@@ -66,4 +66,4 @@ for windows, and I have not attempted to use it with Mac OS yet.</p>
 
 # QT Theme
 <p> I've included a dark theme for QT Creator that mimics msvc 2019. To include it in QT Creator
-copy the file to C:\Users\<yourusername>\AppData\Roaming\QtProject\qtcreator\styles</p>
+copy the file to C:\Users\ (yourusername)\AppData\Roaming\QtProject\qtcreator\styles</p>
