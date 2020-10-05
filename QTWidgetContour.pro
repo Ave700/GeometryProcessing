@@ -56,7 +56,7 @@ FORMS += \
 LIBS += opengl32.lib -lglu32
 
 LIBS += -L$$PWD/3rdparty/GL/lib -lglew32d
-LIBS += -L$$PWD/3rdparty/GL/lib -lglui32
+#LIBS += -L$$PWD/3rdparty/GL/lib -lglui32
 LIBS += -L$$PWD/3rdparty/GL/lib -lfreeglut
 LIBS += -L$$PWD/3rdparty/assimp/lib -lassimp-vc142-mtd
 LIBS += -L$$PWD/3rdparty/ImageMagick-7.0.10-Q8/lib -lCORE_RL_Magick++_

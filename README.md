@@ -47,3 +47,19 @@ The application is built in OpenGL and QT.
     <p>Contains openGL code for contour implementation (used currently),
     this is the bulk of the applicaiton.</p>
 </ul>    
+
+# Building instructions
+<p>Building applicaiton requires current version of QT creator.
+I built the application using Qt 5.15. No guarentee it works with any 
+other versions. If you want to use MSVC I would not reccomend it, and 
+at this time won't provide any information as to how to build in it. All 
+dependencies are in the 3rd party folder. Also currently this only is setup
+for windows, and I have not attempted to use it with Mac OS yet.</p>
+<ol>
+<li>If Qt is not installed go to QT's website and download it: https://www.qt.io/download </li>
+    I'd reccomend while installing only selecting the version you need ( for instance 5.15 > msvc2019 )
+<li/>
+<li>Open the QTWidgetContour.pro file</li>
+<li>Import for you development enviornment (probably only works for 32bit)
+<li>At this point it should build properly</li>
+</ol>
