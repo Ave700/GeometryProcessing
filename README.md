@@ -1,21 +1,27 @@
 # GeometryProcessing
+- 
 This is a geometry processing research project I am doing with Dr. Zhang at Oregon State University.
 
 The application is built in OpenGL and QT. 
 
 # File Structure
+- 
 <ul>
 <li>3rdparty
-    -GL
+    <ul>
+    <li>GL</li>
         -libs/includes (glew, glut, etc)
-    -assimp
+    <li>assimp</li>
         -libs/inlcludes (model loading)
-    -ImageMagick
+    <li>ImageMagick</li>
         -libs/includes (image loading for textures)
+     </ul>
 </li>        
 <li>bin
-    -Dlls for running including QT dlls
-    -Build location and executable of final program
+    <ul>
+    <li>Dlls for running including QT dlls</li>
+    <li>Build location and executable of final program</li>
+    </ul>
 </li>
 <li>models
     <ul>
@@ -30,5 +36,13 @@ The application is built in OpenGL and QT.
 <li>All source and header files are in the main directory</li>
 </ul>
 # Code Structure
-- Main
-    
+- 
+<ul>
+<li>Main</li>
+    Contains main window call and initialization call
+<li>mainwindow</li>
+    Contians GlWindow call and file open gui code
+<li>contourwidget</li>
+    <p>Contains openGL code for contour implementation (used currently),
+    this is the bulk of the applicaiton.</p>
+</ul>    
