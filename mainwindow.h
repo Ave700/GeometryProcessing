@@ -3,6 +3,7 @@
 #include "globals.h"
 #include <QMainWindow>
 #include <QList>
+
 #include "window.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,13 +19,16 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
     QMenu *fileMenu;
     QAction *openAct;
     Window *glWindow;
+
     void createActions();
     void createMenus();
 
 private slots:
+
 void open();
 
 

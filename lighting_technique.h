@@ -1,8 +1,9 @@
 #pragma once
 #ifndef LIGHTING_TECHNIQUE_H
 #define LIGHTING_TECHNIQUE_H
+
 #include "3d_math_qt.h"
-#include "technique.h"
+#include <QOpenGLShaderProgram>
 
 //Lighting structs
 struct BaseLight {
@@ -46,31 +47,39 @@ struct PointLight : public BaseLight
 	}
 };
 
-class LightingTechnique : public Technique
+class LightingTechnique
 {
 public: 
 	static const unsigned int MAX_POINT_LIGHTS = 2;
 
-	LightingTechnique();
+    LightingTechnique(const char* vertexPath, const char* fragmentPath);
 
-	virtual bool Init();
+    virtual bool Init(const char* vertexPath, const char* fragmentPath);
 
 	void SetWVP(const QMatrix4x4& WVP);
 	void SetWorldMatrix(const QMatrix4x4& WorldInverse);
-	void SetTextureUnit(unsigned int TextureUnit);
+    //void SetTextureUnit(unsigned int TextureUnit);
 	void SetDirectionalLight(const DirectionalLight& Light);
 	void SetPointLights(unsigned int NumLights, const PointLight* pLights);
 
 	void SetEyeWorldPos(const QVector3D& EyeWorldPos);
 	void SetMatSpecularIntensity(float Intensity);
 	void SetMatSpecularPower(float Power);
+    unsigned int ID;
 
+    void use();
+    void init();
+    void initPretty();
+    QOpenGLShaderProgram thisProgram;
 
 private:
 	//All these private variables are simply locations, these are how variables get into shaders
 	GLuint m_WVPLocation;
 	GLuint m_WorldMatrixLocation;
-	GLuint m_samplerLocaiton;
+    GLuint m_posAttr;
+    GLuint m_normAttr;
+    GLuint m_colAttr;
+    //GLuint m_samplerLocaiton;
 	GLuint m_eyeWorldPosLocation;
 	GLuint m_matSpecularIntensityLocation;
 	GLuint m_matSpecularPowerLocation;

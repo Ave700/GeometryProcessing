@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/new/UiImages">
+        <file>resources/downArrow.bmp</file>
+    </qresource>
+</RCC>

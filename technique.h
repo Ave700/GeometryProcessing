@@ -4,6 +4,7 @@
 #include "globals.h"
 #include <list>
 
+#include <QOpenGLFunctions>
 #include "utilities.h"
 //Parent class to contain shader techniques for example lighting or otherwise
 class Technique

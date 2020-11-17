@@ -6,8 +6,9 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QMatrix4x4>
-#include <QOpenGLShaderProgram>
+
 #include <QMouseEvent>
+#include "shader.h"
 #include "mesh.h"
 #include "pipeline.h"
 #include "lighting_technique.h"

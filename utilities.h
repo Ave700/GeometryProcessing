@@ -12,6 +12,7 @@
 #include <string.h>
 #include <assert.h>
 #include <limits>
+#include <time.h>
 
 
 bool ReadFile(const char* fileName, std::string& output);

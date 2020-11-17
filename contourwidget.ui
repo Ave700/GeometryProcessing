@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ContourWidget</class>
+ <widget class="QWidget" name="ContourWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1463</width>
+    <height>1008</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="GLHolder"/>
+   </item>
+   <item>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Minimum</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>10</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTabWidget{
+ background: rgb(255, 255, 255);
+ border: 1px solid rgb(190, 190, 190);
+}
+
+QTabWidget::pane { /* The tab widget frame */
+    border: 1px solid rgb(190, 190, 190);
+    background: rgb(255, 255, 255);
+    padding: 3px;
+
+}
+
+QTabWidget::tab-bar {
+   
+background: rgb(255, 255, 255);
+
+}
+
+/* Style the tab using the tab sub-control. Note that
+    it reads QTabBar _not_ QTabWidget */
+QTabBar::tab {
+	border: 1px solid rgb(190, 190, 190);
+    border-bottom:1px solid rgb(255,255,255);
+    background: rgb(255, 255, 255);
+    min-width: 8ex;
+	padding-left: 6px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-right: 8px;
+	
+    
+}
+
+QTabBar::tab:hover {
+    
+	border: 1px solid rgb(0, 120, 180);
+	
+}
+
+QTabBar::tab:selected {
+	background: rgb(0, 120, 180);
+    border: 1px solid rgb(0, 120, 180);
+	color: rgb(255, 255, 255);
+    /*border-bottom-color: #C2C7CB; /* same as pane color */
+
+}
+
+QTabBar::tab:!selected {
+    /*margin-top: 2px; /* make non-selected tabs look smaller */
+   
+}</string>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Renderer</string>
+        </attribute>
+        <widget class="QFrame" name="frame">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>191</width>
+           <height>91</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QFrame{
+border: 0px transparent;
+}</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Render Modes</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="renderOptions">
+              <property name="styleSheet">
+               <string notr="true">QComboBox {
+    border: 1px solid gray;
+    border-radius: 1px;
+    padding: 1px 18px 1px 3px;
+    min-width: 6em;
+}
+
+QComboBox:editable {
+    background: white;
+}
+
+QComboBox:!editable, QComboBox::drop-down:editable {
+     background: rgb(255, 255, 255);
+}
+
+/* QComboBox gets the &quot;on&quot; state when the popup is open */
+QComboBox:!editable:on, QComboBox::drop-down:editable:on {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #D3D3D3, stop: 0.4 #D8D8D8,
+                                stop: 0.5 #DDDDDD, stop: 1.0 #E1E1E1);
+}
+
+QComboBox:on { /* shift the text when the popup opens */
+    padding-top: 3px;
+    padding-left: 4px;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 15px;
+
+    border-left-width: 1px;
+    border-left-color: darkgray;
+    border-left-style: solid; /* just a single line */
+    border-top-right-radius: 3px; /* same radius as the QComboBox */
+    border-bottom-right-radius: 3px;
+}
+
+
+
+QComboBox::down-arrow:on { /* shift the arrow when popup is open */
+    top: 1px;
+    left: 1px;
+}</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>Default</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Line Contour</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Dot Contour</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Wireframe</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QCheckBox" name="renderHollowBox">
+              <property name="styleSheet">
+               <string notr="true">QCheckBox::indicator{
+ width: 15px;
+height: 15px;
+}</string>
+              </property>
+              <property name="text">
+               <string>Render Hollow</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tab_2">
+        <attribute name="title">
+         <string>Tab 2</string>
+        </attribute>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

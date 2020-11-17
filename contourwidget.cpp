@@ -5,24 +5,29 @@ void ContourWidget::initializeGL()
 
     initializeOpenGLFunctions();
     qInfo("INFO: Initializing...");
-    m_program = new QOpenGLShaderProgram(this);
+    glEnable(GL_DEPTH_TEST);
+    s_default = new LightingTechnique(defaultVertShader.c_str(), defaultFragShader.c_str());
+    s_default->thisProgram.bind();
+    //m_program = new QOpenGLShaderProgram(this);
+   // m_program2 = new QOpenGLShaderProgram(this);
     GLenum res = glewInit();
     if (res != GLEW_OK) {
         //fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
         qDebug("Error: '%s'", glewGetErrorString(res));
     }
-    m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShaderSource);
-    m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShaderSource);
-    m_program->link();
-    qInfo("INFO: Linking Pos Attribute...");
-    m_posAttr = m_program->attributeLocation("posAttr");
-    Q_ASSERT(m_posAttr != -1);
-    qInfo("INFO: Linking Color Attribute...");
-    m_colAttr = m_program->uniformLocation("colAttr");
-    Q_ASSERT(m_colAttr != -1);
-    qInfo("INFO: Linking Matrix Uniform...");
-    m_matrixUniform = m_program->uniformLocation("matrix");
-    Q_ASSERT(m_matrixUniform != -1);
+
+   // m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShaderSource);
+   // m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShaderSource);
+    //m_program->link();
+    //qInfo("INFO: Linking Pos Attribute...");
+    //m_posAttr = s_default->thisProgram.attributeLocation("posAttr");
+    //Q_ASSERT(m_posAttr != -1);
+    //qInfo("INFO: Linking Color Attribute...");
+    //m_colAttr = s_default->thisProgram.uniformLocation("colAttr");
+    //Q_ASSERT(m_colAttr != -1);
+    //qInfo("INFO: Linking Matrix Uniform...");
+    //m_matrixUniform = s_default->thisProgram.uniformLocation("matrix");
+    //Q_ASSERT(m_matrixUniform != -1);
 
     qInfo("INFO: Uniform Linking Complete");
     //Modifies camera starting pos
@@ -39,7 +44,7 @@ void ContourWidget::initializeGL()
         qCritical("CRITICAL: Failed to load mesh!");
     }
 
-    p.SetModelCorrection((m_pMesh->getBBoxCenter(m_scale)));
+    p.SetModelCorrection((m_pMesh->getBBoxCenter()));
     p.GetModelCorrection();
     qInfo("INFO: Initialized.");
 
@@ -51,51 +56,94 @@ void ContourWidget::paintGL()
     //qInfo("Rendering...");
     const qreal retinaScale = devicePixelRatio();
     glViewport(0, 0, width() * retinaScale, height() * retinaScale);
-
+   // s_default->use();
     glClear(GL_COLOR_BUFFER_BIT);
 
-
-
     glClearColor(1.0f, 1.0f, 1.0f,1.0f);
-    m_program->bind();
+
 
     QMatrix4x4 matrix;
-   /* matrix.perspective(50.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-    matrix.translate(m_pMesh->getBBoxCenter(m_scale));
-    matrix.translate(0, 0, -1);
 
-    matrix.scale(3.1);*/
-    //matrix.rotate(100.0f * m_frame / screen()->refreshRate(), 0, 1, 0);
-    //Modifies where model is loaded
-    p.Scale(m_scale);
+    p.Scale(m_pMesh->getScaleBestFit());
     p.WorldPos(0.0f, 0.0f, 1.0f);
-
+    QMatrix4x4 WorldTransformation = p.GetWorldTrans();
     p.SetCamera(m_pGameCamera->GetPos(), m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
     p.SetPerspectiveProj(m_persProjInfo);
     p.GetWVPTrans();
-    const QMatrix4x4& WorldTransformation = p.GetWorldTrans();
+
     matrix = p.GetWVPTrans();
-    m_program->setUniformValue(m_matrixUniform, matrix);
-
+    s_default->SetDirectionalLight(m_directionalLight);
+    s_default->SetMatSpecularIntensity(.2f);
+    s_default->SetMatSpecularPower(.5);
+    s_default->SetEyeWorldPos(m_pGameCamera->GetPos());
+    s_default->SetWVP(matrix);
+    s_default->SetWorldMatrix(WorldTransformation);
+    //setting default shaders
+     s_default->use();
+     //s_default->thisProgram.setUniformValue(m_matrixUniform, matrix);
    //-----------Rendering choices------------//
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-//    glClearColor(0.0f,0.0f,0.0f,1.0f);
-//    m_program->setUniformValue(m_colAttr, RED_OPAQUE);
-//    m_pMesh->DrawContourByVertex(p.GetWVPTrans(), m_pGameCamera->GetPos());
+   // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+    switch (renderMode){
+    case 0:
+        {
+
+            glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            s_default->thisProgram.setUniformValue(m_colAttr, QVector4D(.7f, .7f, .7f, 1.0f));
+
+            m_pMesh->Render();
+            update();
+            break;
+        }
+    case 1:
+        {
+
+            glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            //drawing the model the same color as background with depth test
+            //hides lines behind model
+            if(!renderHollow){
+                s_default->thisProgram.setUniformValue(m_colAttr, WHITE_OPAQUE);
+                m_pMesh->Render();
+            }
+            s_default->thisProgram.setUniformValue(m_colAttr, BLACK_OPAQUE);
+            m_pMesh->DrawContourByObjSpace(WorldTransformation, m_pGameCamera->GetPos());
+            update();
+            break;
+        }
+    case 2:
+        {
+
+            glClearColor(0.0f,0.0f,0.0f,1.0f);
+            if(!renderHollow){
+                s_default->thisProgram.setUniformValue(m_colAttr, BLACK_OPAQUE);
+                m_pMesh->Render();
+
+            }
+
+            s_default->thisProgram.setUniformValue(m_colAttr, RED_OPAQUE);
+            m_pMesh->DrawContourByVertex(WorldTransformation, m_pGameCamera->GetPos());
+            update();
+            //m_pMesh->DrawContourByVertex(p.GetWVPTrans(), m_pGameCamera->GetPos());
+            break;
+        }
+
+    case 3:
+        {
+            glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            if(!renderHollow){
+                s_default->thisProgram.setUniformValue(m_colAttr, WHITE_OPAQUE);
+                m_pMesh->Render();
+            }
+
+            s_default->thisProgram.setUniformValue(m_colAttr, BLACK_OPAQUE);
+            m_pMesh->RenderWireFrame();
+
+            update();
+        }
+    }
 
 
-//    m_program->setUniformValue(m_colAttr, WHITE_OPAQUE);
-    m_program->setUniformValue(m_colAttr, QVector4D(.7f, .7f, .7f, 1.0f));
-    m_pMesh->Render();
-
-    //m_program->setUniformValue(m_colAttr, BLACK_OPAQUE);
-   // m_pMesh->DrawContourByObjSpace(WorldTransformation, m_pGameCamera->GetPos());
-
-
-
-
-
-    m_program->release();
+    s_default->thisProgram.release();
 
     ++m_frame;
 }
@@ -104,10 +152,9 @@ void ContourWidget::mouseMoveEvent(QMouseEvent *ev) {
     if (clicked == true) {
 
         //trackball works in float from -width/2 to width/2 and same for y
-        float x = (float)(ev->x() - width() / 2.0f) / width();
-        //qt has y == 0 at top of screen should be bottom
-        float y = -(float)(ev->y() - height() / 2.0f) / height();
-        //qInfo("TRACKING: x:%f\ty:%f", x, y);
+        float x = (float)(2.0* ev->x() - width()) / width();
+        float y = -(float)(2.0f *(ev->y()) - height()) / height();
+
          p.Trackball(x,y);
    }
     update();
@@ -116,9 +163,9 @@ void ContourWidget::mouseMoveEvent(QMouseEvent *ev) {
 void ContourWidget::mousePressEvent(QMouseEvent* ev)  {
 
     clicked = true;
-    float x = (float)(ev->x() - width() / 2.0f) / width();
-    float y = -(float)(ev->y() - height() / 2.0f) / height();
-    //qInfo("CLICKED: x:%f\ty:%f", x, y);
+    float x = (float)(2.0* ev->x() - width()) / width();
+    float y = (float)(2.0f *( height() - ev->y())-height())  / height();
+
     p.tbInit(x, y);
      update();
 }
@@ -141,14 +188,19 @@ void ContourWidget::setModelFilePath(std::string filepath){
     if (!m_pMesh->LoadMesh(m_modelFilePath)) {
         qCritical("CRITICAL: Failed to load mesh!");
     }
+
+    p.Scale(m_pMesh->getScaleBestFit());
+    p.SetModelCorrection((m_pMesh->getBBoxCenter()));
+    p.GetModelCorrection();
 update();
 };
 
-void ContourWidget::setScale(double scale){
+void ContourWidget::setRenderMode(int choice){
+    renderMode = choice;
+    update();
+}
 
-  m_scale = scale/100.0f;
-  emit scaleChanged(scale);
-  p.SetModelCorrection((m_pMesh->getBBoxCenter(m_scale)));
-  p.GetModelCorrection();
-  update();
+void ContourWidget::setRenderHollow(bool state){
+    renderHollow = state;
+    update();
 }

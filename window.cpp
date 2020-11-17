@@ -2,31 +2,25 @@
 #include "contourwidget.h"
 #include "window.h"
 #include "mainwindow.h"
+#include "ui_contourwidget.h"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QDesktopWidget>
-#include <QApplication>
-#include <QSlider>
 
-Window::Window(MainWindow *mw) : mainWindow(mw){
+
+Window::Window(MainWindow *mw) : mainWindow(mw), ui(new Ui::ContourWidget){
+
+    //contourWidget->setSizePolicy(Preferred);
+    //Ui::CentralWidget ui;
+    //QVBoxLayout *mainLayout = new QVBoxLayout;
+    //QHBoxLayout *container = new QHBoxLayout;
+    //QVBoxLayout *optionsPane = new QVBoxLayout;
+    ui->setupUi(this);
     contourWidget = new ContourWidget;
+    //--- Render options drop down
+    ui->GLHolder->addWidget(contourWidget);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    QHBoxLayout *container = new QHBoxLayout;
-    scaleSlider = createSlider();
-    connect(scaleSlider, &QSlider::valueChanged, contourWidget, &ContourWidget::setScale);
-    connect(contourWidget, &ContourWidget::scaleChanged, scaleSlider, &QSlider::setValue);
+    QObject::connect(ui->renderOptions, SIGNAL(activated(int)), this, SLOT(renderSlot(int)));
+    QObject::connect(ui->renderHollowBox, SIGNAL(stateChanged(int)), this, SLOT(renderHollowSlot()));
 
-    container->addWidget(contourWidget);
-    container->addWidget(scaleSlider);
-    QWidget *w = new QWidget;
-    w->setLayout(container);
-    mainLayout->addWidget(w);
-
-    setLayout(mainLayout);
-
-    setWindowTitle(tr("Hello"));
 }
 
 
@@ -34,18 +28,12 @@ void Window::setContourFilePath(std::string filepath){
     contourWidget->setModelFilePath(filepath);
 }
 
-void Window::setContourScale(double scale){
-    contourWidget->setScale(scale);
+
+void Window::renderSlot(int idx){
+    contourWidget->setRenderMode(idx);
 }
 
-QSlider *Window::createSlider()
-{
-    QSlider *slider = new QSlider(Qt::Vertical);
-    slider->setSliderPosition(310);
-    slider->setRange(0, 500);
-    slider->setSingleStep(1);
-    slider->setPageStep(1 * 1);
-    slider->setTickInterval(50 * 1);
-    slider->setTickPosition(QSlider::TicksRight);
-    return slider;
+void Window::renderHollowSlot(){
+    bool state = ui->renderHollowBox->checkState();
+    contourWidget->setRenderHollow(state);
 }

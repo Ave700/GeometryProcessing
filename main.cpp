@@ -8,10 +8,12 @@
 #include "openglwidget.h"
 
 
-
+/*This is the main for QT, simply initializes Imagick (fornow) and calls main window.
+ */
 int main(int argc, char *argv[])
 {
     Magick::InitializeMagick(*argv);
+
     QApplication app(argc, argv);
 
     QSurfaceFormat format;

@@ -27,6 +27,7 @@ SOURCES += \
     mainwindow.cpp \
     mesh.cpp \
     openglwidget.cpp \
+    shader.cpp \
     technique.cpp \
     texture.cpp \
     utilities.cpp \
@@ -44,12 +45,14 @@ HEADERS += \
     mainwindow.h \
     mesh.h \
     openglwidget.h \
+    shader.h \
     technique.h \
     texture.h \
     utilities.h \
     window.h
 
 FORMS += \
+    contourwidget.ui \
     mainwindow.ui
 
 
@@ -69,6 +72,17 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    README.md
+    README.md \
+    resources/downArrow.bmp \
+    resources/downArrow.png \
+    shaders/SH_default.frag \
+    shaders/SH_default.vert \
+    shaders/SH_pretty.frag \
+    shaders/SH_pretty.fs \
+    shaders/SH_pretty.vert \
+    shaders/SH_pretty.vs
+
+RESOURCES += \
+    downArrow.qrc
 
 

@@ -62,70 +62,75 @@ const QMatrix4x4& Pipeline::GetWVPTrans() {
 }
 
 
+
+#define TRACKBALLSIZE .7f
+
+
+static float tbProjectToSphere(float r, float x, float y){
+    float d, t, z;
+    d = sqrt(x*x + y*y);
+    if(d < r * sqrt(.5f)){ //On sphere
+        z = sqrt(r*r - d*d);
+    }
+    else{ //on parabolic sheet
+        t = r/ sqrt(2.0);
+        z = t*t / d;
+    }
+    return z;
+
+}
+
 //Initializing the trackball
 const QVector3D& Pipeline::tbInit(float x, float y) {
-	float z;
-	float x2 = pow((float)x, 2);
-	float y2 = pow((float)y, 2);
-	//printf("xsq:%f\t ysq:%f\n", x2, y2);
-	float r = .5f;
 
-	if (x2 + y2 <= pow(r, 2) / 2.0f) {
-		//printf("hey\n");
-		z = sqrt(pow(r, 2) - (x2 + y2));
-	}
-	else {
-		z = (pow(r, 2) / 2) / sqrt(x2 + y2);
-		//printf("hp\n");
-	}
 
-	m_tbMousePos = QVector3D(x, y, z);
+    m_tbMousePos = QVector3D(x, y, tbProjectToSphere(TRACKBALLSIZE,x,y));
 
 	return m_tbMousePos;
 }
+
+
+
 
 //Function defining trackball rotation for mouse 
 const QQuaternion& Pipeline::Trackball(float x, float y) {
 	//Using algorithm described in Sit and Spin section of this website https://www.khronos.org/opengl/wiki/Object_Mouse_Trackball
 	//should use a sphere when x or y is less then r and trumpet when greater then r
-	float z;
-	//x^2 and y^2 variables
-	float x2 = pow(x, 2.0f);
-	float y2 = pow(y, 2.0f);
-	//Describing screen space as -.5 to .5 or radius 5. This was an intuitive guess and may be inaccurate
-	float r = .5f;
-	//Choosing trumpet or ball as rotation space (read artice above)
-	if (x2 + y2 <= pow(r,2.0f)/2.0f) {
-		z = sqrt(pow(r, 2.0f) - (x2 + y2));
-	}
-	else {
-		z = (pow(r, 2.0f) / 2.0f) / sqrt(x2 + y2);
-	}
+    //skip if called on same vec
+    if(x == m_tbMousePos.x() && y == m_tbMousePos.y()){
+        return m_rotQuat;
+    }
+    //qInfo("X%f\tY:%f", x, y);
 	//Create new mouse pos in 3d space with found z coord
-	QVector3D newMousePos = QVector3D(x, y, z);
-	newMousePos.normalize();
+    QVector3D newMousePos = QVector3D(x, y, tbProjectToSphere(TRACKBALLSIZE, x, y));
 
 	//Collect stored previous mouse position
 	QVector3D originalMousePos = m_tbMousePos;
-	originalMousePos.normalize();
 
 	//The rotation vector is the cross product between first and last mouse position
-	QVector3D rotVec = QVector3D::crossProduct(originalMousePos, newMousePos);
-	rotVec.normalize();
+    QVector3D rotVec = QVector3D::crossProduct(newMousePos, originalMousePos);
+    rotVec.normalize();
 
-	//Collecting angle between first and last position 
-	float theta = acosf(QVector3D::dotProduct(originalMousePos, newMousePos));
+    //QVector3D oldToNew = newMousePos - originalMousePos ;
+     QVector3D oldToNew = originalMousePos - newMousePos;
+    float len = oldToNew.length() / (2.0*TRACKBALLSIZE);
+
+    if(len > 1.0) len = 1.0;
+    if(len < - 1.0) len = -1.0;
+    float phi = 2.0f * asin(len);
+    //qInfo("phi %f",phi);
+
+    //Creating rotation quaternion
+    QQuaternion newRotQuat = QQuaternion(cosf(phi / 2.0f), rotVec * sin(phi / 2.0f));
+
 
 	//Storing new mouse pos into trackball mouse position for next call
-	m_tbMousePos = QVector3D(x, y, z);
+    m_tbMousePos = newMousePos;
 
-	
-	//Creating rotation quaternion
-	QQuaternion newRotQuat = QQuaternion(cosf(theta / 2), rotVec * sin(theta / 2));
 
 	//rotating current rotated position by new quaternion 
-	m_rotQuat *= newRotQuat;
-	
+    m_rotQuat =  newRotQuat * m_rotQuat;
+
 	//This m_rotQuat variable is used to find the rotation matrix during rendering
 	return m_rotQuat;
 }
